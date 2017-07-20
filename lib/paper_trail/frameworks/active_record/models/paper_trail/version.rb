@@ -7,5 +7,13 @@ module PaperTrail
   # See the readme for details.
   class Version < ::ActiveRecord::Base
     include PaperTrail::VersionConcern
+
+    def id_serialized
+      "#{id}&PaperTrail::Version"
+    end
+
+    def version_date
+      self.reify.updated_at.try(:strftime, "%d.%m.%Y %H:%M")
+    end
   end
 end
