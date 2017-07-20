@@ -1,37 +1,48 @@
-require 'singleton'
+require "singleton"
+require "paper_trail/serializers/yaml"
 
 module PaperTrail
+  # Global configuration affecting all threads. Some thread-specific
+  # configuration can be found in `paper_trail.rb`, others in `controller.rb`.
   class Config
     include Singleton
-    attr_accessor :enabled, :timestamp_field, :serializer, :version_limit
-    attr_reader :serialized_attributes
+    attr_accessor :serializer, :version_limit
     attr_writer :track_associations
 
     def initialize
-      @enabled         = true # Indicates whether PaperTrail is on or off.
-      @timestamp_field = :created_at
-      @serializer      = PaperTrail::Serializers::YAML
+      # Variables which affect all threads, whose access is synchronized.
+      @mutex = Mutex.new
+      @enabled = true
 
-      # This setting only defaults to false on AR 4.2+, because that's when
-      # it was deprecated. We want it to function with older versions of
-      # ActiveRecord by default.
-      if ::ActiveRecord::VERSION::STRING < '4.2'
-        @serialized_attributes = true
+      # Variables which affect all threads, whose access is *not* synchronized.
+      @serializer = PaperTrail::Serializers::YAML
+    end
+
+    # Previously, we checked `PaperTrail::VersionAssociation.table_exists?`
+    # here, but that proved to be problematic in situations when the database
+    # connection had not been established, or when the database does not exist
+    # yet (as with `rake db:create`).
+    def track_associations?
+      if @track_associations.nil?
+        ActiveSupport::Deprecation.warn <<-EOS.strip_heredoc.gsub(/\s+/, " ")
+          PaperTrail.config.track_associations has not been set. As of PaperTrail 5, it
+          defaults to false. Tracking associations is an experimental feature so
+          we recommend setting PaperTrail.config.track_associations = false in
+          your config/initializers/paper_trail.rb
+        EOS
+        false
+      else
+        @track_associations
       end
     end
 
-    def serialized_attributes=(value)
-      if ::ActiveRecord::VERSION::MAJOR >= 5
-        warn("DEPRECATED: ActiveRecord 5.0 deprecated `serialized_attributes` "  +
-          "without replacement, so this PaperTrail config setting does " +
-          "nothing with this version, and is always turned off")
-      end
-      @serialized_attributes = value
+    # Indicates whether PaperTrail is on or off. Default: true.
+    def enabled
+      @mutex.synchronize { !!@enabled }
     end
 
-    def track_associations
-      @track_associations ||= PaperTrail::VersionAssociation.table_exists?
+    def enabled=(enable)
+      @mutex.synchronize { @enabled = enable }
     end
-    alias_method :track_associations?, :track_associations
   end
 end
