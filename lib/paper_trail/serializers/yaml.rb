@@ -1,7 +1,8 @@
-require 'yaml'
+require "yaml"
 
 module PaperTrail
   module Serializers
+    # The default serializer for, e.g. `versions.object`.
     module YAML
       extend self # makes all instance methods become module methods as well
 
@@ -13,23 +14,19 @@ module PaperTrail
         ::YAML.dump object
       end
 
-      # Returns a SQL condition to be used to match the given field and value
-      # in the serialized object
+      # Returns a SQL LIKE condition to be used to match the given field and
+      # value in the serialized object.
       def where_object_condition(arel_field, field, value)
         arel_field.matches("%\n#{field}: #{value}\n%")
       end
 
-      # Returns a SQL condition to be used to match the given field and value
-      # in the serialized object_changes
+      # Returns a SQL LIKE condition to be used to match the given field and
+      # value in the serialized `object_changes`.
       def where_object_changes_condition(arel_field, field, value)
         # Need to check first (before) and secondary (after) fields
-        if defined?(::YAML::ENGINE) && ::YAML::ENGINE.yamler == 'psych'
-          arel_field.matches("%\n#{field}:\n- #{value}\n%").
-            or(arel_field.matches("%\n#{field}:\n-%\n- #{value}\n%"))
-        else # Syck adds extra spaces into array dumps
-          arel_field.matches("%\n#{field}: \n%- #{value}\n%").
-            or(arel_field.matches("%\n#{field}: \n-%\n- #{value}\n%"))
-        end
+        m1 = "%\n#{field}:\n- #{value}\n%"
+        m2 = "%\n#{field}:\n-%\n- #{value}\n%"
+        arel_field.matches(m1).or(arel_field.matches(m2))
       end
     end
   end

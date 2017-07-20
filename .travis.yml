@@ -1,10 +1,8 @@
 language: ruby
+cache: bundler
 rvm:
-  - 2.0.0
-  - 1.9.3
-  - 1.8.7
-  - jruby-19mode
-  - jruby-18mode
+  - 2.3.4
+  - 2.1.10
 env:
   global:
     - TRAVIS=true
@@ -16,25 +14,28 @@ env:
 sudo: false
 
 before_script:
+  - mysql --version
   - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_test;'; fi"
   - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_bar; '; fi"
   - sh -c "if [ \"$DB\" = 'mysql' ]; then mysql   -e 'create database paper_trail_foo; '; fi"
+  - psql --version
   - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_test;' -U postgres; fi"
   - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_bar;'  -U postgres; fi"
   - sh -c "if [ \"$DB\" = 'postgres' ]; then psql -c 'create database paper_trail_foo;'  -U postgres; fi"
 
 gemfile:
-  - Gemfile
-  - gemfiles/3.0.gemfile
+  - gemfiles/ar_4.0.gemfile
+  - gemfiles/ar_4.2.gemfile
+  - gemfiles/ar_5.0.gemfile
+  - gemfiles/ar_5.1.gemfile
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - rvm: jruby-19mode
-      env: DB=postgres
-      gemfile: Gemfile
-    - rvm: jruby-18mode
-      gemfile: Gemfile
-    - rvm: 1.8.7
-      gemfile: Gemfile
-    
+  exclude:
+    - gemfile: gemfiles/ar_5.0.gemfile
+      rvm: 2.1.10
+    - gemfile: gemfiles/ar_5.1.gemfile
+      rvm: 2.1.10
+
+addons:
+  postgresql: "9.4"

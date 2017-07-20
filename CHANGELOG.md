@@ -1,57 +1,582 @@
-## 4.0.0 (Unreleased)
+# Changelog
 
-##### Breaking change: if you use a custom initializer for PaperTrail in conjunction with Rails, you will need to add this line of code to the beginning of it:
-```ruby
-PaperTrail::Rails::Engine.eager_load!
-```
+This project follows [semver 2.0.0](http://semver.org/spec/v2.0.0.html) and the
+recommendations of [keepachangelog.com](http://keepachangelog.com/).
 
-*Also*
+## Unreleased
 
-If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually load them into your test helper](https://github.com/airblade/paper_trail#testing).
+### Breaking Changes
 
-  - [#500](https://github.com/airblade/paper_trail/pull/500) - Support for passing `on: []` as an argument, with only manual
-    versioning via calls to `touch_with_version`
-  - [#494](https://github.com/airblade/paper_trail/issues/494) - The install generator will warn the user if the migration they are
-    attempting to generate already exists.
-  - [#484](https://github.com/airblade/paper_trail/pull/484) - Support for
-    [PostgreSQL's JSONB Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html) for storing `object` and `object_changes`.
-  - [#458](https://github.com/airblade/paper_trail/pull/458) - For `create` events, metadata pointing at attributes should attempt
-    to grab the current value instead of looking at the value prior to the change (which would always be `nil`)
-  - [#440](https://github.com/airblade/paper_trail/pull/440) - `versions` association should clear/reload after a transaction rollback.
-  - [#439](https://github.com/airblade/paper_trail/pull/439) / [#12](https://github.com/airblade/paper_trail/issues/12) -
-    Support for versioning of associations (Has Many, Has One, HABTM, etc.)
-  - [#438](https://github.com/airblade/paper_trail/issues/438) - `ModelKlass.paper_trail_enabled_for_model?` should return `false` if
-    `has_paper_trail` has not been declared on the class.
-  - [#404](https://github.com/airblade/paper_trail/issues/404) / [#428](https://github.com/airblade/paper_trail/issues/428) -
-    `model_instance.dup` does not need to be invoked when examining what the instance looked like before changes were persisted,
-    which avoids issues if a 3rd party has overriden the `dup` behavior. Also fixes errors occuring when a user attempts to
-    update the inheritance column on an STI model instance in `ActiveRecord` 4.1.x
-  - [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify` method in context of model where a column has been removed.
-  - [#420](https://github.com/airblade/paper_trail/issues/420) - Add `VersionConcern#where_object_changes` instance method;
-    acts as a helper for querying against the `object_changes` column in versions table.
-  - [#416](https://github.com/airblade/paper_trail/issues/416) - Added a `config` option for enabling/disabling
-    utilization of `serialized_attributes` for `ActiveRecord`, necessary because `serialized_attributes` has been
-    deprecated in `ActiveRecord` version `4.2` and will be removed in version `5.0`
-  - [#414](https://github.com/airblade/paper_trail/issues/414) - Fix functionality `ignore` argument to `has_paper_trail`
-    in `ActiveRecord` 4.
-  - [#413](https://github.com/airblade/paper_trail/issues/413) - Utilize [RequestStore](https://github.com/steveklabnik/request_store)
-    to ensure that the `PaperTrail.whodunnit` is set in a thread safe manner within Rails & Sinatra.
-  - [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup` argument for options hash to `reify` which forces a new model instance.
-  - [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher `have_a_version_with` for easier testing.
-  - [#391](https://github.com/airblade/paper_trail/issues/391) - `object_changes` value should dump to `YAML` as a normal `Hash`
-    instead of an `ActiveSupport::HashWithIndifferentAccess`.
-  - [#381](https://github.com/airblade/paper_trail/issues/381) - `Rspec` and `Cucumber` helpers should not be loaded by
-    default, regardless of whether those libraries are loaded.
-  - [#375](https://github.com/airblade/paper_trail/pull/375) / [#374](https://github.com/airblade/paper_trail/issues/374) /
-    [#354](https://github.com/airblade/paper_trail/issues/354) / [#131](https://github.com/airblade/paper_trail/issues/131) -
-    Versions should be built with `after_` callbacks so the timestamp field for a version can be forced to match the
-    corresponding timestamp in the database for the state persistence of a change to the base (versioned) model.
-  - [#347](https://github.com/airblade/paper_trail/pull/347) - Autoload `ActiveRecord` models in via a `Rails::Engine` when
-    the gem is used with `Rails`.
-  - Methods handling serialized attributes should fallback to the currently set Serializer instead of always falling back
-    to `PaperTrail::Serializers::YAML`.
-  - Both `PaperTrail.config` and `PaperTrail.configure` are now identical, and will both return the `PaperTrail::Config`
-    instance and also yield it if a block is provided.
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- Stop including unnecessary files in released gem. Reduces .gem file size
+  from 100K to 30K.
+
+## 7.1.0 (2017-07-09)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#803](https://github.com/airblade/paper_trail/issues/803)
+  Deprecate `where_object_changes` when reading json from a text column
+- [#976](https://github.com/airblade/paper_trail/pull/976)
+  `PaperTrail.whodunnit` accepts a `Proc`
+
+### Fixed
+
+- None
+
+## 7.0.3 (2017-06-01)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#959](https://github.com/airblade/paper_trail/pull/959) -
+  Add migration version (eg. `[5.1]`) to all migration generators.
+
+## 7.0.2 (2017-04-26)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#932](https://github.com/airblade/paper_trail/pull/932) -
+  `PaperTrail.whodunnit` now accepts a block.
+
+### Fixed
+
+- [#956](https://github.com/airblade/paper_trail/pull/956) -
+  Fix ActiveRecord >= 5.1 version check
+
+## 7.0.1 (2017-04-10)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- Generate cleaner migrations for databases other than MySQL
+
+### Fixed
+
+- [#949](https://github.com/airblade/paper_trail/issues/949) - Inherit from the
+  new versioned migration class, e.g. `ActiveRecord::Migration[5.1]`
+
+## 7.0.0 (2017-04-01)
+
+### Breaking Changes
+
+- Drop support for ruby 1.9.3, whose EOL was 2015-02-23
+- Drop support for ruby 2.0.0, whose EOL was 2016-02-24
+- Remove deprecated config methods:
+  - PaperTrail.serialized_attributes?
+  - PaperTrail.config.serialized_attributes
+  - PaperTrail.config.serialized_attributes=
+- Sinatra integration moved to
+  [paper_trail-sinatra](https://github.com/jaredbeck/paper_trail-sinatra) gem
+
+### Added
+
+- `PaperTrail.gem_version` returns a `Gem::Version`, nice for comparisons.
+
+### Fixed
+
+- [#925](https://github.com/airblade/paper_trail/pull/925) - Update RSpec
+  matchers to work with custom version association names
+- [#929](https://github.com/airblade/paper_trail/pull/929) -
+  Fix error calling private method in rails 4.0
+- [#938](https://github.com/airblade/paper_trail/pull/938) - Fix bug where
+  non-standard foreign key names broke belongs_to associations
+- [#940](https://github.com/airblade/paper_trail/pull/940) - When destroying
+  versions to stay under version_limit, don't rely on the database to
+  implicitly return the versions in the right order
+
+## 6.0.2 (2016-12-13)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- `88e513f` - Surprise argument modification bug in `where_object_changes`
+- `c7efd62` - Column type-detection bug in `where_object_changes`
+- [#905](https://github.com/airblade/paper_trail/pull/905) - Only invoke
+  `logger.warn` if `logger` instance exists
+
+### Code Quality
+
+- Improve Metrics/AbcSize from 30 to 22
+- Improve Metrics/PerceivedComplexity from 10 to 9
+
+## 6.0.1 (2016-12-04)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- Remove rails 3 features that are no longer supported, most notably,
+  `protected_attributes`.
+
+## 6.0.0 (2016-12-03)
+
+Now with rails 5.1 support, and less model pollution! About 40 methods that were
+polluting your models' namespaces have been removed, reducing the chances of a
+name conflict with your methods.
+
+### Breaking Changes
+
+- [#898](https://github.com/airblade/paper_trail/pull/898) - Dropped support
+  for rails 3
+- [#864](https://github.com/airblade/paper_trail/pull/864) - The model methods
+  deprecated in 5.2.0 have been removed. Use `paper_trail.x` instead of `x`.
+- [#861](https://github.com/airblade/paper_trail/pull/861) - `timestamp_field=`
+  removed without replacement. It is no longer configurable. The
+  timestamp field in the `versions` table must now be named `created_at`.
+
+### Deprecated
+
+- None
+
+### Added
+
+- [#900](https://github.com/airblade/paper_trail/pull/900/files) -
+  Support for rails 5.1
+- [#881](https://github.com/airblade/paper_trail/pull/881) - Add RSpec matcher
+  `have_a_version_with_changes` for easier testing.
+
+### Fixed
+
+- None
+
+## 5.2.3 (2016-11-29)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#889](https://github.com/airblade/paper_trail/pull/889) -
+  Fix warning message in instances when a version can't be persisted due to validation errors.
+- [#868](https://github.com/airblade/paper_trail/pull/868)
+  Fix usage of find_by_id when primary key is not id, affecting reifying certain records.
+
+
+## 5.2.2 (2016-09-08)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- [#863](https://github.com/airblade/paper_trail/pull/863) -
+  PaperTrail.timestamp_field= deprecated without replacement.
+  See [#861](https://github.com/airblade/paper_trail/pull/861) for discussion.
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 5.2.1 (2016-09-02)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#857](https://github.com/airblade/paper_trail/pull/857) -
+  Fix deserialization of enums written by PT 4.
+- [#798](https://github.com/airblade/paper_trail/issues/798) -
+  Fix a rare bug with serialization of enums in rails 4.2 only when
+  using `touch_with_version`.
+
+## 5.2.0 (2016-06-27)
+
+### Breaking Changes
+
+- None
+
+### Deprecated
+
+- [#719](https://github.com/airblade/paper_trail/pull/719) -
+  The majority of model methods. Use paper_trail.x instead of x. Why? Your
+  models are a crowded namespace, and we want to get out of your way!
+
+### Added
+
+- None
+
+### Fixed
+
+- None
+
+## 5.1.1 (2016-05-31)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#813](https://github.com/airblade/paper_trail/pull/813) -
+  Warning for paper_trail_on_destroy(:after) for pre-releases of AR 5
+- [#651](https://github.com/airblade/paper_trail/issues/651) -
+  Bug with installing PT on MySQL <= 5.6
+
+## 5.1.0 (2016-05-20)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#809](https://github.com/airblade/paper_trail/pull/809) -
+  Print warning if version cannot be saved.
+
+### Fixed
+
+- [#812](https://github.com/airblade/paper_trail/pull/812) -
+  Issue with saving HABTM associated objects using accepts_nested_attributes_for
+- [#811](https://github.com/airblade/paper_trail/pull/811) -
+  Avoid unnecessary query in #record_destroy
+- Improvements to documentation
+
+## 5.0.1 (2016-05-04)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#791](https://github.com/airblade/paper_trail/issues/791) -
+  A rare issue in applications that override `warn`.
+- [#789](https://github.com/airblade/paper_trail/issues/789) -
+  A potentially common issue, in applications with initializers that use
+  versioned models.
+
+## 5.0.0 (2016-05-02)
+
+### Breaking Changes
+
+- [#758](https://github.com/airblade/paper_trail/pull/758) -
+  `PaperTrail.config.track_associations` getter method removed,
+  use `track_associations?` instead.
+- [#740](https://github.com/airblade/paper_trail/issues/740) -
+  `PaperTrail.config.track_associations?` now defaults to false
+- [#723](https://github.com/airblade/paper_trail/pull/723) -
+  `PaperTrail.enabled=` now affects all threads
+- [#556](https://github.com/airblade/paper_trail/pull/556) /
+  [#301](https://github.com/airblade/paper_trail/issues/301) -
+  If you are tracking who is responsible for changes with `whodunnit`, be aware
+  that PaperTrail no longer adds the `set_paper_trail_whodunnit` before_action
+  for you. Please add this before_action to your ApplicationController to
+  continue recording whodunnit. See the readme for an example.
+- [#683](https://github.com/airblade/paper_trail/pull/683) /
+  [#682](https://github.com/airblade/paper_trail/issues/682) -
+  Destroy callback default changed to :before to accommodate ActiveRecord 5
+  option `belongs_to_required_by_default` and new Rails 5 default.
+
+### Added
+
+- [#771](https://github.com/airblade/paper_trail/pull/771) -
+  Added support for has_and_belongs_to_many associations
+- [#741](https://github.com/airblade/paper_trail/issues/741) /
+  [#681](https://github.com/airblade/paper_trail/pull/681)
+  MySQL unicode support in migration generator
+- [#689](https://github.com/airblade/paper_trail/pull/689) -
+  Rails 5 compatibility
+- Added a rails config option: `config.paper_trail.enabled`
+- [#503](https://github.com/airblade/paper_trail/pull/730) -
+  Support for reifying belongs_to associations.
+
+### Fixed
+
+- [#777](https://github.com/airblade/paper_trail/issues/777) -
+  Support HMT associations with `:source` option.
+- [#738](https://github.com/airblade/paper_trail/issues/738) -
+  Rare bug where a non-versioned STI parent caused `changeset` to
+  return an empty hash.
+- [#731](https://github.com/airblade/paper_trail/pull/731) -
+  Map enums to database values before storing in `object_changes` column.
+- [#715](https://github.com/airblade/paper_trail/issues/715) -
+  Optimize post-rollback association reset.
+- [#701](https://github.com/airblade/paper_trail/pull/701) /
+  [#699](https://github.com/airblade/paper_trail/issues/699) -
+  Cleaning old versions explicitly preserves the most recent
+  versions instead of relying on database result ordering.
+- [#635](https://github.com/airblade/paper_trail/issues/635) -
+  A bug where it was not possible to disable PT when using a multi-threaded
+  webserver.
+- [#584](https://github.com/airblade/paper_trail/issues/584) -
+  Fixed deprecation warning for Active Record after_callback / after_commit
+
+## 4.2.0 (2016-05-31)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- [#808](https://github.com/airblade/paper_trail/pull/808) -
+  Warn when destroy callback is set to :after with ActiveRecord 5
+  option `belongs_to_required_by_default` set to `true`.
+
+### Fixed
+
+- None
+
+## 4.1.0 (2016-01-30)
+
+### Known Issues
+
+- Version changesets now store ENUM values incorrectly (as nulls). Previously the values were stored as strings. This only affects Rails 4, not Rails 5. See [#926](https://github.com/airblade/paper_trail/pull/926)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- A way to control the order of AR callbacks.
+  [#614](https://github.com/airblade/paper_trail/pull/614)
+- Added `unversioned_attributes` option to `reify`.
+  [#579](https://github.com/airblade/paper_trail/pull/579)
+
+### Fixed
+
+- None
+
+## 4.0.2 (2016-01-19)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#696](https://github.com/airblade/paper_trail/issues/696) /
+  [#697](https://github.com/airblade/paper_trail/pull/697)
+  Bind JSON query parameters in `where_object` and `where_object_changes`.
+
+## 4.0.1 (2015-12-14)
+
+### Breaking Changes
+
+- None
+
+### Added
+
+- None
+
+### Fixed
+
+- [#636](https://github.com/airblade/paper_trail/issues/636) -
+  Should compile assets without a db connection
+- [#589](https://github.com/airblade/paper_trail/pull/589) /
+  [#588](https://github.com/airblade/paper_trail/issues/588) -
+  Fixes timestamp for "create" versions
+
+## 4.0.0 (2015-07-30)
+
+This major release adds JSON column support in PostgreSQL, limited support for
+versioning associations, various new configuration options, and a year's worth
+of bug fixes. Thanks to everyone who helped test the two betas and two release
+candidates.
+
+### Breaking Changes
+
+- Using a Rails initializer to reopen PaperTrail::Version or otherwise extend
+  PaperTrail is no longer recommended. An alternative is described in the
+  readme. See https://github.com/airblade/paper_trail/pull/557 and
+  https://github.com/airblade/paper_trail/pull/492.
+- If you depend on the `RSpec` or `Cucumber` helpers, you must
+  [require them in your test helper](https://github.com/airblade/paper_trail#testing).
+- [#566](https://github.com/airblade/paper_trail/pull/566) - Removed deprecated
+  methods `paper_trail_on` and `paper_trail_off`. Use `paper_trail_on!` and
+  `paper_trail_off!` instead.
+- [#458](https://github.com/airblade/paper_trail/pull/458) - Version metadata
+  (the `:meta` option) from AR attributes for `create` events will now save the
+  current value instead of `nil`.
+- [#391](https://github.com/airblade/paper_trail/issues/391) - `object_changes`
+  value should dump to `YAML` as a normal `Hash` instead of an
+  `ActiveSupport::HashWithIndifferentAccess`.
+- [#375](https://github.com/airblade/paper_trail/pull/375) /
+  [#374](https://github.com/airblade/paper_trail/issues/374) /
+  [#354](https://github.com/airblade/paper_trail/issues/354) /
+  [#131](https://github.com/airblade/paper_trail/issues/131) -
+  Versions are now saved with an `after_` callback, instead of a `before_`
+  callback. This ensures that the timestamp field for a version matches the
+  corresponding timestamp in the model.
+- `3da1f104` - `PaperTrail.config` and `PaperTrail.configure` are now
+  identical: both return the `PaperTrail::Config` instance and also
+  yield it if a block is provided.
+
+### Added
+
+- [#525](https://github.com/airblade/paper_trail/issues/525) /
+  [#512](https://github.com/airblade/paper_trail/pull/512) -
+  Support for virtual accessors and redefined setter and getter methods.
+- [#518](https://github.com/airblade/paper_trail/pull/518) - Support for
+  querying against PostgreSQL's
+  [`JSON` and `JSONB` column types](http://www.postgresql.org/docs/9.4/static/datatype-json.html)
+  via `PaperTrail::VersionConcern#where_object` and
+  `PaperTrail::VersionConcern#where_object_changes`
+- [#507](https://github.com/airblade/paper_trail/pull/507) -
+  New option: `:save_changes` controls whether or not to save changes to the
+  `object_changes` column (if it exists).
+- [#500](https://github.com/airblade/paper_trail/pull/500) - Support for
+  passing an empty array to the `on` option (`on: []`) to disable all
+  automatic versioning.
+- [#494](https://github.com/airblade/paper_trail/issues/494) - The install
+  generator will warn the user if the migration they are attempting to
+  generate already exists.
+- [#484](https://github.com/airblade/paper_trail/pull/484) - Support for
+  [PostgreSQL's `JSONB` Type](http://www.postgresql.org/docs/9.4/static/datatype-json.html)
+  for storing `object` and `object_changes`.
+- [#439](https://github.com/airblade/paper_trail/pull/439) /
+  [#12](https://github.com/airblade/paper_trail/issues/12) -
+  Support for versioning associations (has many, has one, etc.) one level deep.
+- [#420](https://github.com/airblade/paper_trail/issues/420) - Add
+  `VersionConcern#where_object_changes` instance method; acts as a helper for
+  querying against the `object_changes` column in versions table.
+- [#416](https://github.com/airblade/paper_trail/issues/416) - Added a
+  `config` option for enabling/disabling utilization of
+  `serialized_attributes` for `ActiveRecord`, necessary because
+  `serialized_attributes` has been deprecated in `ActiveRecord` version `4.2`
+  and will be removed in version `5.0`
+- [#399](https://github.com/airblade/paper_trail/pull/399) - Add `:dup`
+  argument for options hash to `reify` which forces a new model instance.
+- [#394](https://github.com/airblade/paper_trail/pull/394) - Add RSpec matcher
+  `have_a_version_with` for easier testing.
+- [#347](https://github.com/airblade/paper_trail/pull/347) - Autoload
+  `ActiveRecord` models in via a `Rails::Engine` when the gem is used with
+  `Rails`.
+
+### Fixed
+
+- [#563](https://github.com/airblade/paper_trail/pull/563) - Fixed a bug in
+  `touch_with_version` so that it will still create a version even when the
+  `on` option is, e.g. `[:create]`.
+- [#541](https://github.com/airblade/paper_trail/pull/541) -
+  `PaperTrail.config.enabled` should be Thread Safe
+- [#451](https://github.com/airblade/paper_trail/issues/451) - Fix `reify`
+  method in context of model where the base class has a default scope, and the
+  live instance is not scoped within that default scope.
+- [#440](https://github.com/airblade/paper_trail/pull/440) - `versions`
+  association should clear/reload after a transaction rollback.
+- [#438](https://github.com/airblade/paper_trail/issues/438) -
+  `ModelKlass.paper_trail_enabled_for_model?` should return `false` if
+  `has_paper_trail` has not been declared on the class.
+- [#404](https://github.com/airblade/paper_trail/issues/404) /
+  [#428](https://github.com/airblade/paper_trail/issues/428) -
+  `model_instance.dup` does not need to be invoked when examining what the
+  instance looked like before changes were persisted, which avoids issues if a
+  3rd party has overriden the `dup` behavior. Also fixes errors occuring when
+  a user attempts to update the inheritance column on an STI model instance in
+  `ActiveRecord` 4.1.x
+- [#427](https://github.com/airblade/paper_trail/pull/427) - Fix `reify`
+  method in context of model where a column has been removed.
+- [#414](https://github.com/airblade/paper_trail/issues/414) - Fix
+  functionality `ignore` argument to `has_paper_trail` in `ActiveRecord` 4.
+- [#413](https://github.com/airblade/paper_trail/issues/413) - Utilize
+  [RequestStore](https://github.com/steveklabnik/request_store) to ensure that
+  the `PaperTrail.whodunnit` is set in a thread safe manner within Rails and
+  Sinatra.
+- [#381](https://github.com/airblade/paper_trail/issues/381) - Fix `irb`
+  warning: `can't alias context from irb_context`. `Rspec` and `Cucumber`
+  helpers should not be loaded by default, regardless of whether those
+  libraries are loaded.
+- [#248](https://github.com/airblade/paper_trail/issues/248) - In MySQL, to
+  prevent truncation, generated migrations now use `longtext` instead of `text`.
+- Methods handling serialized attributes should fallback to the currently set
+  Serializer instead of always falling back to `PaperTrail::Serializers::YAML`.
+
+### Deprecated
+
+- [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
+  `originator` method, use `paper_trail_originator`.
+
+## 3.0.9
+
+  - [#479](https://github.com/airblade/paper_trail/issues/479) - Deprecated
+    `originator` method in favor of `paper_trail_originator` Deprecation warning
+    informs users that the `originator` of the methods will be removed in
+    version `4.0`. (Backported from v4)
+  - Updated deprecation warnings for `Model.paper_trail_on` and
+    `Model.paper_trail_off` to have display correct version number the methods
+    will be removed (`4.0`)
+
+## 3.0.8
+
+  - [#525](https://github.com/airblade/paper_trail/issues/525) / [#512](https://github.com/airblade/paper_trail/pull/512) -
+    Support for virtual accessors and redefined setter and getter methods.
 
 ## 3.0.7
 
@@ -66,7 +591,7 @@ If you depend on the `RSpec` or `Cucumber` helpers, you will need to [manually l
 ## 3.0.5
 
   - [#401](https://github.com/airblade/paper_trail/issues/401) / [#406](https://github.com/airblade/paper_trail/issues/406) -
-    `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used with in Rails. This feature has
+    `PaperTrail::Version` class is not loaded via a `Rails::Engine`, even when the gem is used within Rails. This feature has
     will be re-introduced in version `4.0`.
   - [#398](https://github.com/airblade/paper_trail/pull/398) - Only require the `RSpec` helper if `RSpec::Core` is required.
 
@@ -151,7 +676,7 @@ in the `PaperTrail::Version` class through a `Rails::Engine` when the gem is use
   - [#216](https://github.com/airblade/paper_trail/pull/216) - Added helper & extension for [RSpec](https://github.com/rspec/rspec),
     and helper for [Cucumber](http://cukes.info).
   - [#212](https://github.com/airblade/paper_trail/pull/212) - Added `PaperTrail::Cleaner` module, useful for discarding draft versions.
-  - [#207](https://github.com/airblade/paper_trail/issues/207) - Versions for `'create'` events are now created with `create!` instead of 
+  - [#207](https://github.com/airblade/paper_trail/issues/207) - Versions for `'create'` events are now created with `create!` instead of
     `create` so that an exception gets raised if it is appropriate to do so.
   - [#199](https://github.com/airblade/paper_trail/pull/199) - Rails 4 compatibility.
   - [#165](https://github.com/airblade/paper_trail/pull/165) - Namespaced the `Version` class under the `PaperTrail` module.
